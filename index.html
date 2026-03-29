@@ -43,6 +43,17 @@ body {
    HEADER
    ============================================================ */
 
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: box-shadow 0.2s;
+}
+
+.sticky-header.scrolled {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+
 header {
   background: var(--green-mid);
   border-bottom: 3px solid var(--gold);
@@ -259,6 +270,48 @@ footer a { color: var(--gold-dim); text-decoration: none; }
 footer a:hover { text-decoration: underline; }
 
 /* ============================================================
+   SCORING EXPLAINER
+   ============================================================ */
+
+.scoring-explainer {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 16px 8px;
+}
+
+.scoring-explainer summary {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  cursor: pointer;
+  text-align: center;
+  padding: 8px;
+  list-style: none;
+}
+
+.scoring-explainer summary::-webkit-details-marker { display: none; }
+.scoring-explainer summary::before { content: '+ '; }
+.scoring-explainer[open] summary::before { content: '- '; }
+
+.explainer-content {
+  background: rgba(0,0,0,0.2);
+  border-radius: 4px;
+  padding: 14px 18px;
+  margin-top: 6px;
+}
+
+.explainer-content p {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+
+.explainer-content p:last-child { margin-bottom: 0; }
+
+/* ============================================================
    LOADING / ERROR
    ============================================================ */
 
@@ -294,14 +347,16 @@ footer a:hover { text-decoration: underline; }
 </head>
 <body>
 
-<header>
-  <h1 id="tournament-title"></h1>
-  <div class="subtitle" id="tournament-subtitle">POOL STANDINGS</div>
-</header>
+<div class="sticky-header">
+  <header>
+    <h1 id="tournament-title"></h1>
+    <div class="subtitle" id="tournament-subtitle">POOL STANDINGS</div>
+  </header>
 
-<div class="tabs">
-  <button class="tab-btn active" data-tab="standings">Pool Standings</button>
-  <button class="tab-btn" data-tab="leaderboard">Leaderboard</button>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="standings">Pool Standings</button>
+    <button class="tab-btn" data-tab="leaderboard">Leaderboard</button>
+  </div>
 </div>
 
 <main>
@@ -320,6 +375,15 @@ footer a:hover { text-decoration: underline; }
   <div class="updated" id="last-updated"></div>
   <div>Auto-refreshes every 5 minutes</div>
 </div>
+
+<details class="scoring-explainer">
+  <summary>How Scoring Works</summary>
+  <div class="explainer-content">
+    <p>Each entrant picks 6 golfers: 3 from Tier 1, 1 from Tier 2, and 2 from Tier 3.</p>
+    <p>Total Score = combined finish positions of all 6 picks. Lowest score wins.</p>
+    <p>Missed cut penalty: golfers who miss the cut are scored as (number who made cut + 1).</p>
+  </div>
+</details>
 
 <footer>
   Powered by <a href="https://firstover.ai" target="_blank">FirstOver.ai</a>
@@ -582,6 +646,14 @@ document.getElementById('tournament-title').textContent =
 
 loadAll();
 setInterval(loadAll, CONFIG.refreshInterval);
+
+/* ==============================================================
+   STICKY HEADER SHADOW ON SCROLL
+   ============================================================== */
+const stickyHeader = document.querySelector('.sticky-header');
+window.addEventListener('scroll', () => {
+  stickyHeader.classList.toggle('scrolled', window.scrollY > 4);
+}, { passive: true });
 </script>
 
 </body>
