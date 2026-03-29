@@ -167,6 +167,28 @@ tr:hover { background: var(--row-hover); }
    POOL STANDINGS
    ============================================================ */
 
+.pool-col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px 4px;
+  margin-bottom: 2px;
+}
+
+.pool-col-header span {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  opacity: 0.6;
+}
+
+.pool-col-header .lbl-pos { min-width: 36px; text-align: center; }
+.pool-col-header .lbl-name { flex: 1; margin-left: 12px; }
+.pool-col-header .lbl-total { margin-left: 12px; }
+
 .pool-card {
   background: var(--grey-card);
   border-radius: 6px;
@@ -281,10 +303,10 @@ footer a:hover { text-decoration: underline; }
 
 .scoring-explainer summary {
   font-family: 'Roboto Condensed', sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.35);
+  color: #FFD700;
   cursor: pointer;
   text-align: center;
   padding: 8px;
@@ -504,7 +526,11 @@ function renderStandings(rows) {
 
   const leaderScore = entrants.length > 0 ? entrants[0].totalScore : null;
 
-  let html = '';
+  let html = `<div class="pool-col-header">
+    <span class="lbl-pos">POS</span>
+    <span class="lbl-name">ENTRANT</span>
+    <span class="lbl-total">TOTAL</span>
+  </div>`;
   for (const e of entrants) {
     const isLeader = e.totalScore === leaderScore;
     html += `
