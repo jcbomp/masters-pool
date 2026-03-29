@@ -413,10 +413,11 @@ function renderStandings(rows) {
 
     if (!name) continue;
 
-    // New entrant when name/place changes or first row
-    if (!current || current.name !== name || current.totalScore !== totalScore) {
+    // New entrant when name changes or first row
+    const score = parseInt(totalScore) || 0;
+    if (!current || current.name !== name) {
       if (current) entrants.push(current);
-      current = { place, name, totalScore: parseInt(totalScore) || 0, totalScoreRaw: totalScore, golfers: [] };
+      current = { place, name, totalScore: score, totalScoreRaw: totalScore, golfers: [] };
     }
 
     if (golfer) {
