@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 Masters Pool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CONFIGURATION — Change these for different tournaments
+   ============================================================ */
+
+:root {
+  --green-dark: #003d2e;
+  --green-mid: #006747;
+  --green-light: #00875a;
+  --gold: #f2c75c;
+  --gold-dim: #c9a84c;
+  --white: #f0f0ec;
+  --red: #d04040;
+  --grey-card: #1a2e28;
+  --row-hover: rgba(255,255,255,0.04);
+  --row-alt: rgba(0,0,0,0.12);
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--green-dark);
+  color: var(--white);
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+header {
+  background: var(--green-mid);
+  border-bottom: 3px solid var(--gold);
+  text-align: center;
+  padding: 24px 16px 18px;
+}
+
+header h1 {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+header .subtitle {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: var(--white);
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+/* ============================================================
+   NAV TABS
+   ============================================================ */
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  background: var(--green-dark);
+  padding: 12px 16px 0;
+}
+
+.tab-btn {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--white);
+  background: var(--green-mid);
+  border: none;
+  padding: 10px 24px;
+  cursor: pointer;
+  border-radius: 4px 4px 0 0;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.tab-btn.active {
+  opacity: 1;
+  background: var(--green-light);
+  border-bottom: 2px solid var(--gold);
+}
+
+.tab-btn:hover { opacity: 0.9; }
+
+/* ============================================================
+   CONTENT AREA
+   ============================================================ */
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.section { display: none; }
+.section.active { display: block; }
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+th {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 2px solid var(--gold-dim);
+  white-space: nowrap;
+}
+
+th.num, td.num { text-align: center; }
+
+td {
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  white-space: nowrap;
+}
+
+tr:nth-child(even) { background: var(--row-alt); }
+tr:hover { background: var(--row-hover); }
+
+/* ============================================================
+   POOL STANDINGS
+   ============================================================ */
+
+.pool-card {
+  background: var(--grey-card);
+  border-radius: 6px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.pool-card.leader {
+  border: 1px solid var(--gold);
+  box-shadow: 0 0 12px rgba(242,199,92,0.15);
+}
+
+.pool-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: rgba(0,0,0,0.2);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.pool-place {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gold);
+  min-width: 36px;
+  text-align: center;
+}
+
+.leader .pool-place { color: var(--gold); text-shadow: 0 0 8px rgba(242,199,92,0.4); }
+
+.pool-name {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  flex: 1;
+  margin-left: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.pool-score {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-left: 12px;
+}
+
+.pool-golfers {
+  padding: 6px 14px 10px;
+}
+
+.pool-golfer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.pool-golfer:last-child { border-bottom: none; }
+
+.golfer-name { flex: 1; }
+.golfer-tier { color: var(--gold-dim); font-size: 11px; margin-right: 12px; min-width: 44px; }
+.golfer-pos { min-width: 36px; text-align: right; font-weight: 700; }
+
+/* ============================================================
+   LEADERBOARD SCORES
+   ============================================================ */
+
+.score-under { color: var(--gold); font-weight: 700; }
+.score-over { color: var(--red); font-weight: 700; }
+.score-even { color: var(--white); }
+.score-cut { color: #888; font-style: italic; }
+
+/* ============================================================
+   FOOTER & META
+   ============================================================ */
+
+.meta {
+  text-align: center;
+  padding: 16px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+}
+
+.meta .updated { margin-bottom: 4px; }
+
+footer {
+  text-align: center;
+  padding: 16px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 1px;
+}
+
+footer a { color: var(--gold-dim); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* ============================================================
+   LOADING / ERROR
+   ============================================================ */
+
+.loading {
+  text-align: center;
+  padding: 48px;
+  color: rgba(255,255,255,0.4);
+  font-size: 14px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 640px) {
+  header h1 { font-size: 22px; }
+  header .subtitle { font-size: 11px; letter-spacing: 2px; }
+  .tab-btn { font-size: 12px; padding: 8px 14px; letter-spacing: 1px; }
+  main { padding: 10px; }
+  th { font-size: 10px; padding: 6px 6px; }
+  td { padding: 6px 6px; font-size: 12px; }
+  .pool-header { padding: 10px 10px; }
+  .pool-place { font-size: 18px; }
+  .pool-name { font-size: 15px; }
+  .pool-golfers { padding: 4px 10px 8px; }
+  .pool-golfer { font-size: 12px; }
+  .leaderboard-table .col-r1,
+  .leaderboard-table .col-r2,
+  .leaderboard-table .col-r3,
+  .leaderboard-table .col-r4 { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="tournament-title"></h1>
+  <div class="subtitle" id="tournament-subtitle">POOL STANDINGS</div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="standings">Pool Standings</button>
+  <button class="tab-btn" data-tab="leaderboard">Leaderboard</button>
+</div>
+
+<main>
+  <section id="standings" class="section active">
+    <div class="loading" id="standings-loading">Loading standings...</div>
+    <div id="standings-content"></div>
+  </section>
+
+  <section id="leaderboard" class="section">
+    <div class="loading" id="leaderboard-loading">Loading leaderboard...</div>
+    <div id="leaderboard-content"></div>
+  </section>
+</main>
+
+<div class="meta">
+  <div class="updated" id="last-updated"></div>
+  <div>Auto-refreshes every 5 minutes</div>
+</div>
+
+<footer>
+  Powered by <a href="https://firstover.ai" target="_blank">FirstOver.ai</a>
+</footer>
+
+<script>
+/* ==============================================================
+   CONFIGURATION — Edit these for different tournaments
+   ============================================================== */
+const CONFIG = {
+  tournamentName: '2026 Masters Pool',
+  tournamentEmoji: '\u26f3',
+  year: 2026,
+  sheetId: '1lX9UC4KD9OLlXTPE_Y6xVT587RpQlTTr_Ex3PUMaI9w',
+  standingsTab: 'Pool Standings',
+  leaderboardTab: 'Sorted Leaderboard',
+  refreshInterval: 5 * 60 * 1000, // 5 minutes
+};
+
+/* ==============================================================
+   CSV FETCHING
+   ============================================================== */
+function csvUrl(tab) {
+  return `https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}`;
+}
+
+function parseCSV(text) {
+  const rows = [];
+  let current = '';
+  let inQuote = false;
+  const lines = [];
+
+  // Split into lines respecting quoted newlines
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === '"') { inQuote = !inQuote; current += ch; }
+    else if (ch === '\n' && !inQuote) { lines.push(current); current = ''; }
+    else { current += ch; }
+  }
+  if (current.trim()) lines.push(current);
+
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    const cells = [];
+    let cell = '';
+    let q = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (q && line[i + 1] === '"') { cell += '"'; i++; }
+        else { q = !q; }
+      } else if (ch === ',' && !q) {
+        cells.push(cell.trim());
+        cell = '';
+      } else {
+        cell += ch;
+      }
+    }
+    cells.push(cell.trim());
+    rows.push(cells);
+  }
+  return rows;
+}
+
+async function fetchSheet(tab) {
+  const resp = await fetch(csvUrl(tab));
+  if (!resp.ok) throw new Error(`Failed to fetch ${tab}`);
+  const text = await resp.text();
+  return parseCSV(text);
+}
+
+/* ==============================================================
+   POOL STANDINGS
+   ============================================================== */
+function renderStandings(rows) {
+  if (rows.length < 2) return '<div class="loading">No standings data</div>';
+
+  // Group rows by entrant (every 6 rows = 1 entrant with 6 golfers)
+  // Columns: Pool Place, Entrant, Tier, Golfer, Finish Position, Total Score
+  const entrants = [];
+  let current = null;
+
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    const place = row[0];
+    const name = row[1];
+    const tier = row[2];
+    const golfer = row[3];
+    const pos = row[4];
+    const totalScore = row[5];
+
+    if (!name) continue;
+
+    // New entrant when name/place changes or first row
+    if (!current || current.name !== name || current.totalScore !== totalScore) {
+      if (current) entrants.push(current);
+      current = { place, name, totalScore: parseInt(totalScore) || 0, totalScoreRaw: totalScore, golfers: [] };
+    }
+
+    if (golfer) {
+      current.golfers.push({ golfer, tier, pos: parseInt(pos) || pos });
+    }
+  }
+  if (current) entrants.push(current);
+
+  // Sort by total score ascending
+  entrants.sort((a, b) => a.totalScore - b.totalScore);
+
+  // Assign display places (handle ties)
+  let displayPlace = 1;
+  for (let i = 0; i < entrants.length; i++) {
+    if (i > 0 && entrants[i].totalScore !== entrants[i - 1].totalScore) {
+      displayPlace = i + 1;
+    }
+    entrants[i].displayPlace = displayPlace;
+  }
+
+  const leaderScore = entrants.length > 0 ? entrants[0].totalScore : null;
+
+  let html = '';
+  for (const e of entrants) {
+    const isLeader = e.totalScore === leaderScore;
+    html += `
+      <div class="pool-card${isLeader ? ' leader' : ''}">
+        <div class="pool-header">
+          <div class="pool-place">${e.displayPlace}</div>
+          <div class="pool-name">${esc(e.name)}</div>
+          <div class="pool-score">${e.totalScoreRaw}</div>
+        </div>
+        <div class="pool-golfers">
+          ${e.golfers.map(g => `
+            <div class="pool-golfer">
+              <span class="golfer-tier">${esc(g.tier)}</span>
+              <span class="golfer-name">${esc(g.golfer)}</span>
+              <span class="golfer-pos">${g.pos}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+  }
+
+  return html;
+}
+
+/* ==============================================================
+   LEADERBOARD
+   ============================================================== */
+function renderLeaderboard(rows) {
+  if (rows.length < 2) return '<div class="loading">No leaderboard data</div>';
+
+  // Columns: Player Name, Position, Score (vs Par), Total Strokes, R1, R2, R3, R4, Cut Status, Effective Position
+  let html = `
+    <table class="leaderboard-table">
+      <thead>
+        <tr>
+          <th class="num">Pos</th>
+          <th>Player</th>
+          <th class="num">Score</th>
+          <th class="num">Strokes</th>
+          <th class="num col-r1">R1</th>
+          <th class="num col-r2">R2</th>
+          <th class="num col-r3">R3</th>
+          <th class="num col-r4">R4</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>`;
+
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    const name = r[0] || '';
+    const pos = r[1] || '';
+    const score = r[2] || '';
+    const strokes = r[3] || '';
+    const r1 = r[4] || '';
+    const r2 = r[5] || '';
+    const r3 = r[6] || '';
+    const r4 = r[7] || '';
+    const cut = r[8] || '';
+
+    if (!name) continue;
+
+    const scoreClass = scoreColor(score);
+    const isCut = cut.toUpperCase() === 'CUT';
+
+    html += `
+      <tr class="${isCut ? 'score-cut' : ''}">
+        <td class="num">${esc(pos)}</td>
+        <td>${esc(name)}</td>
+        <td class="num ${scoreClass}">${esc(score)}</td>
+        <td class="num">${esc(strokes)}</td>
+        <td class="num col-r1">${esc(r1)}</td>
+        <td class="num col-r2">${esc(r2)}</td>
+        <td class="num col-r3">${esc(r3)}</td>
+        <td class="num col-r4">${esc(r4)}</td>
+        <td>${isCut ? '<span class="score-cut">CUT</span>' : esc(cut)}</td>
+      </tr>`;
+  }
+
+  html += '</tbody></table>';
+  return html;
+}
+
+function scoreColor(val) {
+  if (!val) return '';
+  const s = val.toString().trim();
+  if (s === 'E' || s === '0') return 'score-even';
+  if (s.startsWith('-')) return 'score-under';
+  if (s.startsWith('+') || (parseInt(s) > 0 && !isNaN(parseInt(s)))) return 'score-over';
+  return '';
+}
+
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ==============================================================
+   TABS
+   ============================================================== */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ==============================================================
+   DATA LOADING
+   ============================================================== */
+async function loadAll() {
+  try {
+    const [standingsData, leaderboardData] = await Promise.all([
+      fetchSheet(CONFIG.standingsTab),
+      fetchSheet(CONFIG.leaderboardTab)
+    ]);
+
+    document.getElementById('standings-content').innerHTML = renderStandings(standingsData);
+    document.getElementById('standings-loading').style.display = 'none';
+
+    document.getElementById('leaderboard-content').innerHTML = renderLeaderboard(leaderboardData);
+    document.getElementById('leaderboard-loading').style.display = 'none';
+
+    const now = new Date();
+    document.getElementById('last-updated').textContent =
+      `Last updated: ${now.toLocaleString()}`;
+  } catch (err) {
+    console.error('Load error:', err);
+  }
+}
+
+/* ==============================================================
+   INIT
+   ============================================================== */
+document.getElementById('tournament-title').textContent =
+  `${CONFIG.tournamentEmoji} ${CONFIG.tournamentName}`;
+
+loadAll();
+setInterval(loadAll, CONFIG.refreshInterval);
+</script>
+
+</body>
+</html>
