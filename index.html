@@ -680,7 +680,7 @@ setInterval(loadAll, CONFIG.refreshInterval);
    PICKS DEADLINE CHECK
    ============================================================== */
 (function() {
-  const deadline = new Date('2026-04-10T07:00:00-04:00');
+  const deadline = new Date('2026-04-10T07:30:00-04:00');
   const btn = document.getElementById('picks-tab-btn');
   if (new Date() > deadline) {
     btn.textContent = 'Picks Closed';
