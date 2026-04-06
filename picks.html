@@ -404,45 +404,33 @@ footer a:hover { text-decoration: underline; }
 </div>
 
 <main>
-  <!-- Screen 1: Email -->
+  <!-- Screen 1: Info -->
   <div id="screen-email" class="screen active">
     <div class="email-form">
-      <h2>Enter Your Email</h2>
-      <p>We'll check if you've already submitted picks.</p>
+      <h2>Enter Your Info</h2>
+      <p>This is how you'll appear on the scoreboard.</p>
       <div class="error-msg" id="email-error"></div>
+      <div class="input-group">
+        <label for="first-name-input">First Name</label>
+        <input type="text" id="first-name-input" placeholder="Colin" autocomplete="given-name">
+      </div>
+      <div class="input-group">
+        <label for="last-name-input">Last Name</label>
+        <input type="text" id="last-name-input" placeholder="Bomprezzi" autocomplete="family-name">
+      </div>
       <div class="input-group">
         <label for="email-input">Email Address</label>
         <input type="email" id="email-input" placeholder="you@example.com" autocomplete="email">
       </div>
-      <button class="btn" id="email-continue" onclick="checkEmail()">Continue</button>
+      <button class="btn" id="email-continue" onclick="goToPicks()">Continue</button>
     </div>
   </div>
 
-  <!-- Screen 2: Existing Picks -->
-  <div id="screen-existing" class="screen">
-    <div class="existing-picks">
-      <h2>You Already Submitted Picks!</h2>
-      <p style="text-align:center;font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:16px;">Here's what you've got:</p>
-      <div id="existing-picks-list"></div>
-      <p style="text-align:center;font-size:13px;color:rgba(255,255,255,0.5);margin-top:20px;">
-        Want to change your picks? Contact <a href="mailto:colin@firstover.ai" class="scoreboard-link">colin@firstover.ai</a>
-      </p>
-      <a href="index.html" class="btn btn-secondary" style="display:block;text-align:center;margin-top:16px;text-decoration:none;">View Scoreboard</a>
-    </div>
-  </div>
-
-  <!-- Screen 3: Pick Selection -->
+  <!-- Screen 2: Pick Selection -->
   <div id="screen-picks" class="screen">
     <div id="picks-error" class="error-msg"></div>
 
     <div id="tier-sections"></div>
-
-    <div class="name-input-section">
-      <div class="input-group" style="margin-bottom:0;">
-        <label for="name-input">Your Name (for the leaderboard)</label>
-        <input type="text" id="name-input" placeholder="e.g. Colin B.">
-      </div>
-    </div>
 
     <div class="submit-section">
       <button class="btn" id="submit-btn" disabled onclick="submitPicks()">Submit Picks</button>
@@ -596,6 +584,7 @@ const TIERS = {
    ============================================================== */
 const selections = { tier1: [], tier2: [], tier3: [] };
 let userEmail = '';
+let userName = '';
 
 /* ==============================================================
    DEADLINE CHECK
@@ -615,13 +604,19 @@ function isPastDeadline() {
 })();
 
 /* ==============================================================
-   EMAIL CHECK
+   INFO SCREEN → PICKS
    ============================================================== */
-async function checkEmail() {
-  const emailInput = document.getElementById('email-input');
-  const email = emailInput.value.trim();
+function goToPicks() {
+  const firstName = document.getElementById('first-name-input').value.trim();
+  const lastName = document.getElementById('last-name-input').value.trim();
+  const email = document.getElementById('email-input').value.trim();
   const errorEl = document.getElementById('email-error');
 
+  if (!firstName || !lastName) {
+    errorEl.textContent = 'Please enter your first and last name.';
+    errorEl.classList.add('show');
+    return;
+  }
   if (!email || !email.includes('@')) {
     errorEl.textContent = 'Please enter a valid email address.';
     errorEl.classList.add('show');
@@ -629,62 +624,18 @@ async function checkEmail() {
   }
 
   errorEl.classList.remove('show');
+  userName = firstName + ' ' + lastName;
   userEmail = email;
-
-  const btn = document.getElementById('email-continue');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Checking...';
-
-  try {
-    const url = CONFIG.appsScriptUrl + '?action=check&email=' + encodeURIComponent(email);
-    const resp = await fetch(url);
-    const data = await resp.json();
-
-    if (data.status === 'exists') {
-      showExistingPicks(data.entry);
-    } else {
-      showPickForm();
-    }
-  } catch (err) {
-    // If Apps Script URL not configured, go straight to pick form
-    if (CONFIG.appsScriptUrl === 'YOUR_APPS_SCRIPT_WEB_APP_URL') {
-      showPickForm();
-    } else {
-      errorEl.textContent = 'Error checking email. Please try again.';
-      errorEl.classList.add('show');
-    }
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Continue';
-  }
+  showPickForm();
 }
 
-// Allow Enter key on email input
+// Allow Enter key on inputs
 document.getElementById('email-input').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') checkEmail();
+  if (e.key === 'Enter') goToPicks();
 });
-
-/* ==============================================================
-   EXISTING PICKS SCREEN
-   ============================================================== */
-function showExistingPicks(entry) {
-  const list = document.getElementById('existing-picks-list');
-  const picks = entry.picks;
-  let html = '';
-
-  picks.tier1.forEach(p => {
-    html += `<div class="pick-item"><span class="pick-tier">Tier 1</span><span class="pick-name">${esc(p)}</span></div>`;
-  });
-  picks.tier2.forEach(p => {
-    html += `<div class="pick-item"><span class="pick-tier">Tier 2</span><span class="pick-name">${esc(p)}</span></div>`;
-  });
-  picks.tier3.forEach(p => {
-    html += `<div class="pick-item"><span class="pick-tier">Tier 3</span><span class="pick-name">${esc(p)}</span></div>`;
-  });
-
-  list.innerHTML = html;
-  switchScreen('screen-existing');
-}
+document.getElementById('last-name-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') goToPicks();
+});
 
 /* ==============================================================
    PICK FORM
@@ -773,14 +724,10 @@ function updateSubmitButton() {
   const valid =
     selections.tier1.length === TIERS.tier1.required &&
     selections.tier2.length === TIERS.tier2.required &&
-    selections.tier3.length === TIERS.tier3.required &&
-    document.getElementById('name-input').value.trim().length > 0;
+    selections.tier3.length === TIERS.tier3.required;
 
   document.getElementById('submit-btn').disabled = !valid;
 }
-
-// Re-validate when name changes
-document.getElementById('name-input').addEventListener('input', updateSubmitButton);
 
 /* ==============================================================
    SUBMIT
@@ -788,13 +735,6 @@ document.getElementById('name-input').addEventListener('input', updateSubmitButt
 async function submitPicks() {
   const btn = document.getElementById('submit-btn');
   const errorEl = document.getElementById('picks-error');
-  const name = document.getElementById('name-input').value.trim();
-
-  if (!name) {
-    errorEl.textContent = 'Please enter your name.';
-    errorEl.classList.add('show');
-    return;
-  }
 
   errorEl.classList.remove('show');
   btn.disabled = true;
@@ -806,7 +746,7 @@ async function submitPicks() {
     );
 
   const payload = {
-    name,
+    name: userName,
     email: userEmail,
     tier1: getNames('tier1'),
     tier2: getNames('tier2'),
