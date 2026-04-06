@@ -498,13 +498,15 @@ function renderStandings(rows) {
     const pos = row[4];
     const totalScore = row[5];
 
-    if (!name) continue;
+    // Carry entrant name forward for blank rows (rows 2-6 of each group)
+    const resolvedName = name || (current ? current.name : '');
+    if (!resolvedName) continue;
 
     // New entrant when name changes or first row
     const score = parseInt(totalScore) || 0;
-    if (!current || current.name !== name) {
+    if (!current || current.name !== resolvedName) {
       if (current) entrants.push(current);
-      current = { place, name, totalScore: score, totalScoreRaw: totalScore, golfers: [] };
+      current = { place, name: resolvedName, totalScore: score, totalScoreRaw: totalScore, golfers: [] };
     }
 
     if (golfer) {
