@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 Masters Pool — Submit Picks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-dark: #003d2e;
+  --green-mid: #006747;
+  --green-light: #00875a;
+  --gold: #f2c75c;
+  --gold-dim: #c9a84c;
+  --white: #f0f0ec;
+  --red: #d04040;
+  --grey-card: #1a2e28;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--green-dark);
+  color: var(--white);
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+header {
+  background: var(--green-mid);
+  border-bottom: 3px solid var(--gold);
+  text-align: center;
+  padding: 24px 16px 18px;
+}
+
+header h1 {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+header .subtitle {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: var(--white);
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.deadline-banner {
+  background: rgba(0,0,0,0.3);
+  text-align: center;
+  padding: 10px 16px;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--gold);
+}
+
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* Screens */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* Email screen */
+.email-form {
+  background: var(--grey-card);
+  border-radius: 8px;
+  padding: 32px 24px;
+  margin-top: 24px;
+  text-align: center;
+}
+
+.email-form h2 {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 20px;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.email-form p {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 20px;
+}
+
+.input-group {
+  margin-bottom: 16px;
+}
+
+.input-group label {
+  display: block;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 6px;
+  text-align: left;
+}
+
+input[type="text"],
+input[type="email"] {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 4px;
+  color: var(--white);
+  font-family: 'Roboto Mono', monospace;
+  font-size: 16px;
+  outline: none;
+}
+
+input:focus {
+  border-color: var(--gold);
+}
+
+.btn {
+  display: inline-block;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--green-dark);
+  background: var(--gold);
+  border: none;
+  padding: 14px 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  width: 100%;
+}
+
+.btn:hover { opacity: 0.9; }
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  margin-top: 12px;
+}
+
+/* Tier sections */
+.tier-section {
+  background: var(--grey-card);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.tier-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: rgba(0,0,0,0.2);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.tier-title {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.tier-count {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+}
+
+.tier-count.complete {
+  color: var(--green-light);
+  font-weight: 700;
+}
+
+.golfer-list {
+  padding: 4px 0;
+}
+
+.golfer-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.golfer-row:last-child { border-bottom: none; }
+.golfer-row:hover { background: rgba(255,255,255,0.04); }
+.golfer-row.selected { background: rgba(242,199,92,0.1); }
+.golfer-row.disabled { opacity: 0.35; cursor: not-allowed; }
+
+.golfer-check {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 3px;
+  margin-right: 12px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.golfer-row.selected .golfer-check {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.golfer-row.selected .golfer-check::after {
+  content: '\2713';
+  color: var(--green-dark);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.golfer-info {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.golfer-name {
+  font-size: 14px;
+}
+
+.golfer-odds {
+  font-size: 12px;
+  color: var(--gold-dim);
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
+/* Existing picks display */
+.existing-picks {
+  background: var(--grey-card);
+  border-radius: 8px;
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.existing-picks h2 {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 20px;
+  color: var(--gold);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.pick-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  font-size: 14px;
+}
+
+.pick-item:last-child { border-bottom: none; }
+
+.pick-tier {
+  color: var(--gold-dim);
+  font-size: 12px;
+  min-width: 50px;
+}
+
+.pick-name { flex: 1; }
+
+/* Confirmation */
+.confirmation {
+  background: var(--grey-card);
+  border-radius: 8px;
+  padding: 32px 24px;
+  margin-top: 24px;
+  text-align: center;
+}
+
+.confirmation .check-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.confirmation h2 {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 22px;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.confirmation p {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 16px;
+}
+
+.confirmation .picks-summary {
+  text-align: left;
+  margin: 20px 0;
+}
+
+.scoreboard-link {
+  color: var(--gold);
+  text-decoration: none;
+}
+.scoreboard-link:hover { text-decoration: underline; }
+
+/* Error */
+.error-msg {
+  background: rgba(208,64,64,0.15);
+  border: 1px solid var(--red);
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--red);
+  display: none;
+}
+
+.error-msg.show { display: block; }
+
+/* Loading spinner */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+footer {
+  text-align: center;
+  padding: 24px 16px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 1px;
+}
+
+footer a { color: var(--gold-dim); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* Submit section */
+.submit-section {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.name-input-section {
+  background: var(--grey-card);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 640px) {
+  header h1 { font-size: 22px; }
+  header .subtitle { font-size: 11px; letter-spacing: 2px; }
+  main { padding: 10px; }
+  .email-form { padding: 24px 16px; }
+  .golfer-row { padding: 10px 12px; }
+  .golfer-name { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>&#9971; 2026 Masters Pool</h1>
+  <div class="subtitle">Submit Your Picks</div>
+</header>
+
+<div class="deadline-banner" id="deadline-banner">
+  Picks lock Thursday April 10, 7:00 AM ET
+</div>
+
+<main>
+  <!-- Screen 1: Email -->
+  <div id="screen-email" class="screen active">
+    <div class="email-form">
+      <h2>Enter Your Email</h2>
+      <p>We'll check if you've already submitted picks.</p>
+      <div class="error-msg" id="email-error"></div>
+      <div class="input-group">
+        <label for="email-input">Email Address</label>
+        <input type="email" id="email-input" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <button class="btn" id="email-continue" onclick="checkEmail()">Continue</button>
+    </div>
+  </div>
+
+  <!-- Screen 2: Existing Picks -->
+  <div id="screen-existing" class="screen">
+    <div class="existing-picks">
+      <h2>You Already Submitted Picks!</h2>
+      <p style="text-align:center;font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:16px;">Here's what you've got:</p>
+      <div id="existing-picks-list"></div>
+      <p style="text-align:center;font-size:13px;color:rgba(255,255,255,0.5);margin-top:20px;">
+        Want to change your picks? Contact <a href="mailto:colin@firstover.ai" class="scoreboard-link">colin@firstover.ai</a>
+      </p>
+      <a href="index.html" class="btn btn-secondary" style="display:block;text-align:center;margin-top:16px;text-decoration:none;">View Scoreboard</a>
+    </div>
+  </div>
+
+  <!-- Screen 3: Pick Selection -->
+  <div id="screen-picks" class="screen">
+    <div id="picks-error" class="error-msg"></div>
+
+    <div id="tier-sections"></div>
+
+    <div class="name-input-section">
+      <div class="input-group" style="margin-bottom:0;">
+        <label for="name-input">Your Name (for the leaderboard)</label>
+        <input type="text" id="name-input" placeholder="e.g. Colin B.">
+      </div>
+    </div>
+
+    <div class="submit-section">
+      <button class="btn" id="submit-btn" disabled onclick="submitPicks()">Submit Picks</button>
+    </div>
+  </div>
+
+  <!-- Screen 4: Confirmation -->
+  <div id="screen-confirm" class="screen">
+    <div class="confirmation">
+      <div class="check-icon">&#9971;</div>
+      <h2>Your Picks Are Locked In!</h2>
+      <p>Good luck at Augusta!</p>
+      <div class="picks-summary" id="confirm-picks"></div>
+      <a href="index.html" class="btn btn-secondary" style="display:block;text-align:center;margin-top:20px;text-decoration:none;">View Live Scoreboard</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  Powered by <a href="https://firstover.ai" target="_blank">FirstOver.ai</a>
+</footer>
+
+<script>
+/* ==============================================================
+   CONFIG
+   ============================================================== */
+const CONFIG = {
+  // IMPORTANT: Replace this URL after deploying the Apps Script
+  appsScriptUrl: 'YOUR_APPS_SCRIPT_WEB_APP_URL',
+  deadline: new Date('2026-04-10T07:00:00-04:00'),
+  poolEmail: 'colin@firstover.ai',
+};
+
+/* ==============================================================
+   TIER DATA (hardcoded for speed — 91 golfers)
+   ============================================================== */
+const TIERS = {
+  tier1: {
+    label: 'Tier 1',
+    required: 3,
+    golfers: [
+      { rank: 1, name: 'Scottie Scheffler', odds: '+500' },
+      { rank: 2, name: 'Bryson DeChambeau', odds: '+1000' },
+      { rank: 3, name: 'Jon Rahm', odds: '+1000' },
+      { rank: 4, name: 'Rory McIlroy', odds: '+1200' },
+      { rank: 5, name: 'Xander Schauffele', odds: '+1600' },
+      { rank: 6, name: 'Ludvig \u00c5berg', odds: '+1600' },
+      { rank: 7, name: 'Matt Fitzpatrick', odds: '+2200' },
+      { rank: 8, name: 'Cameron Young', odds: '+2200' },
+      { rank: 9, name: 'Tommy Fleetwood', odds: '+2200' },
+      { rank: 10, name: 'Justin Rose', odds: '+3000' },
+    ]
+  },
+  tier2: {
+    label: 'Tier 2',
+    required: 1,
+    golfers: [
+      { rank: 11, name: 'Robert MacIntyre', odds: '+3300' },
+      { rank: 12, name: 'Patrick Reed', odds: '+3300' },
+      { rank: 13, name: 'Collin Morikawa', odds: '+3500' },
+      { rank: 14, name: 'Hideki Matsuyama', odds: '+4000' },
+      { rank: 15, name: 'Jordan Spieth', odds: '+4000' },
+      { rank: 16, name: 'Brooks Koepka', odds: '+4000' },
+      { rank: 17, name: 'Min Woo Lee', odds: '+4000' },
+      { rank: 18, name: 'Si Woo Kim', odds: '+4500' },
+      { rank: 19, name: 'Chris Gotterup', odds: '+5000' },
+      { rank: 20, name: 'Viktor Hovland', odds: '+5000' },
+      { rank: 21, name: 'Russell Henley', odds: '+5500' },
+      { rank: 22, name: 'Shane Lowry', odds: '+6000' },
+      { rank: 23, name: 'Akshay Bhatia', odds: '+6000' },
+      { rank: 24, name: 'Adam Scott', odds: '+6500' },
+      { rank: 25, name: 'Justin Thomas', odds: '+6500' },
+    ]
+  },
+  tier3: {
+    label: 'Tier 3',
+    required: 2,
+    golfers: [
+      { rank: 26, name: 'Sepp Straka', odds: '+7000' },
+      { rank: 27, name: 'Tyrrell Hatton', odds: '+7000' },
+      { rank: 28, name: 'Patrick Cantlay', odds: '+7000' },
+      { rank: 29, name: 'Jason Day', odds: '+7000' },
+      { rank: 30, name: 'Jake Knapp', odds: '+8000' },
+      { rank: 31, name: 'Jacob Bridgeman', odds: '+8000' },
+      { rank: 32, name: 'Marco Penge', odds: '+8000' },
+      { rank: 33, name: 'Sungjae Im', odds: '+10000' },
+      { rank: 34, name: 'Sam Burns', odds: '+10000' },
+      { rank: 35, name: 'Harris English', odds: '+10000' },
+      { rank: 36, name: 'Corey Conners', odds: '+10000' },
+      { rank: 37, name: 'J.J. Spaun', odds: '+10000' },
+      { rank: 38, name: 'Cameron Smith', odds: '+10000' },
+      { rank: 39, name: 'Nicolai H\u00f8jgaard', odds: '+10000' },
+      { rank: 40, name: 'Maverick McNealy', odds: '+10000' },
+      { rank: 41, name: 'Gary Woodland', odds: '+10000' },
+      { rank: 42, name: 'Max Homa', odds: '+10000' },
+      { rank: 43, name: 'Daniel Berger', odds: '+12500' },
+      { rank: 44, name: 'Ben Griffin', odds: '+12500' },
+      { rank: 45, name: 'Rasmus H\u00f8jgaard', odds: '+15000' },
+      { rank: 46, name: 'Kurt Kitayama', odds: '+15000' },
+      { rank: 47, name: 'Aaron Rai', odds: '+15000' },
+      { rank: 48, name: 'Wyndham Clark', odds: '+15000' },
+      { rank: 49, name: 'Ryan Gerard', odds: '+15000' },
+      { rank: 50, name: 'Brian Harman', odds: '+15000' },
+      { rank: 51, name: 'Sam Stevens', odds: '+17500' },
+      { rank: 52, name: 'Max Greyserman', odds: '+17500' },
+      { rank: 53, name: 'Ryan Fox', odds: '+17500' },
+      { rank: 54, name: 'Jarvis Casey', odds: '+17500' },
+      { rank: 55, name: 'Keegan Bradley', odds: '+17500' },
+      { rank: 56, name: 'Haotong Li', odds: '+17500' },
+      { rank: 57, name: 'Dustin Johnson', odds: '+17500' },
+      { rank: 58, name: 'Alex Noren', odds: '+17500' },
+      { rank: 59, name: 'Harry Hall', odds: '+17500' },
+      { rank: 60, name: 'Nicolas Echavarria', odds: '+17500' },
+      { rank: 61, name: 'Sami Valimaki', odds: '+22500' },
+      { rank: 62, name: 'Nick Taylor', odds: '+22500' },
+      { rank: 63, name: 'Sergio Garcia', odds: '+22500' },
+      { rank: 64, name: 'Carlos Ortiz', odds: '+22500' },
+      { rank: 65, name: 'Kristoffer Reitan', odds: '+25000' },
+      { rank: 66, name: 'Matt McCarty', odds: '+25000' },
+      { rank: 67, name: 'Rasmus Neergaard-Petersen', odds: '+25000' },
+      { rank: 68, name: 'Andrew Novak', odds: '+25000' },
+      { rank: 69, name: 'Aldrich Potgieter', odds: '+25000' },
+      { rank: 70, name: 'Tom McKibbin', odds: '+25000' },
+      { rank: 71, name: 'Michael Brennan', odds: '+35000' },
+      { rank: 72, name: 'Michael Kim', odds: '+35000' },
+      { rank: 73, name: 'Davis Riley', odds: '+50000' },
+      { rank: 74, name: 'Bubba Watson', odds: '+50000' },
+      { rank: 75, name: 'John Keefer', odds: '+50000' },
+      { rank: 76, name: 'Zach Johnson', odds: '+50000' },
+      { rank: 77, name: 'Charl Schwartzel', odds: '+75000' },
+      { rank: 78, name: 'Angel Cabrera', odds: '+100000' },
+      { rank: 79, name: 'Mason Howell', odds: '+100000' },
+      { rank: 80, name: 'Fifa Laopakdee', odds: '+100000' },
+      { rank: 81, name: 'Ethan Fang', odds: '+100000' },
+      { rank: 82, name: 'Brian Campbell', odds: '+100000' },
+      { rank: 83, name: 'Vijay Singh', odds: '+100000' },
+      { rank: 84, name: 'Jose Maria Olazabal', odds: '+100000' },
+      { rank: 85, name: 'Brandon Holtz', odds: '+100000' },
+      { rank: 86, name: 'Naoyuki Kataoka', odds: '+100000' },
+      { rank: 87, name: 'Danny Willett', odds: '+100000' },
+      { rank: 88, name: 'Jackson Herrington', odds: '+100000' },
+      { rank: 89, name: 'Fred Couples', odds: '+100000' },
+      { rank: 90, name: 'Mateo Pulcini', odds: '+100000' },
+      { rank: 91, name: 'Mike Weir', odds: '+100000' },
+    ]
+  }
+};
+
+/* ==============================================================
+   STATE
+   ============================================================== */
+const selections = { tier1: [], tier2: [], tier3: [] };
+let userEmail = '';
+
+/* ==============================================================
+   DEADLINE CHECK
+   ============================================================== */
+function isPastDeadline() {
+  return new Date() > CONFIG.deadline;
+}
+
+(function checkDeadline() {
+  if (isPastDeadline()) {
+    document.getElementById('deadline-banner').textContent = 'PICKS ARE CLOSED';
+    document.getElementById('deadline-banner').style.background = 'rgba(208,64,64,0.3)';
+    document.getElementById('deadline-banner').style.color = '#ff6b6b';
+    document.getElementById('email-continue').disabled = true;
+    document.getElementById('email-continue').textContent = 'Picks Closed';
+  }
+})();
+
+/* ==============================================================
+   EMAIL CHECK
+   ============================================================== */
+async function checkEmail() {
+  const emailInput = document.getElementById('email-input');
+  const email = emailInput.value.trim();
+  const errorEl = document.getElementById('email-error');
+
+  if (!email || !email.includes('@')) {
+    errorEl.textContent = 'Please enter a valid email address.';
+    errorEl.classList.add('show');
+    return;
+  }
+
+  errorEl.classList.remove('show');
+  userEmail = email;
+
+  const btn = document.getElementById('email-continue');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Checking...';
+
+  try {
+    const url = CONFIG.appsScriptUrl + '?action=check&email=' + encodeURIComponent(email);
+    const resp = await fetch(url);
+    const data = await resp.json();
+
+    if (data.status === 'exists') {
+      showExistingPicks(data.entry);
+    } else {
+      showPickForm();
+    }
+  } catch (err) {
+    // If Apps Script URL not configured, go straight to pick form
+    if (CONFIG.appsScriptUrl === 'YOUR_APPS_SCRIPT_WEB_APP_URL') {
+      showPickForm();
+    } else {
+      errorEl.textContent = 'Error checking email. Please try again.';
+      errorEl.classList.add('show');
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Continue';
+  }
+}
+
+// Allow Enter key on email input
+document.getElementById('email-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') checkEmail();
+});
+
+/* ==============================================================
+   EXISTING PICKS SCREEN
+   ============================================================== */
+function showExistingPicks(entry) {
+  const list = document.getElementById('existing-picks-list');
+  const picks = entry.picks;
+  let html = '';
+
+  picks.tier1.forEach(p => {
+    html += `<div class="pick-item"><span class="pick-tier">Tier 1</span><span class="pick-name">${esc(p)}</span></div>`;
+  });
+  picks.tier2.forEach(p => {
+    html += `<div class="pick-item"><span class="pick-tier">Tier 2</span><span class="pick-name">${esc(p)}</span></div>`;
+  });
+  picks.tier3.forEach(p => {
+    html += `<div class="pick-item"><span class="pick-tier">Tier 3</span><span class="pick-name">${esc(p)}</span></div>`;
+  });
+
+  list.innerHTML = html;
+  switchScreen('screen-existing');
+}
+
+/* ==============================================================
+   PICK FORM
+   ============================================================== */
+function showPickForm() {
+  renderTiers();
+  switchScreen('screen-picks');
+}
+
+function renderTiers() {
+  const container = document.getElementById('tier-sections');
+  let html = '';
+
+  for (const [tierKey, tier] of Object.entries(TIERS)) {
+    html += `
+      <div class="tier-section">
+        <div class="tier-header">
+          <span class="tier-title">${tier.label} &mdash; Pick ${tier.required}</span>
+          <span class="tier-count" id="count-${tierKey}">0 of ${tier.required}</span>
+        </div>
+        <div class="golfer-list">`;
+
+    for (const g of tier.golfers) {
+      html += `
+          <div class="golfer-row" id="row-${tierKey}-${g.rank}" onclick="toggleGolfer('${tierKey}', ${g.rank})">
+            <div class="golfer-check"></div>
+            <div class="golfer-info">
+              <span class="golfer-name">${g.rank}. ${esc(g.name)}</span>
+              <span class="golfer-odds">(${g.odds})</span>
+            </div>
+          </div>`;
+    }
+
+    html += `
+        </div>
+      </div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function toggleGolfer(tierKey, rank) {
+  const tier = TIERS[tierKey];
+  const idx = selections[tierKey].indexOf(rank);
+  const row = document.getElementById(`row-${tierKey}-${rank}`);
+
+  if (idx > -1) {
+    // Deselect
+    selections[tierKey].splice(idx, 1);
+    row.classList.remove('selected');
+  } else {
+    // Check limit
+    if (selections[tierKey].length >= tier.required) return;
+    selections[tierKey].push(rank);
+    row.classList.add('selected');
+  }
+
+  updateTierUI(tierKey);
+  updateSubmitButton();
+}
+
+function updateTierUI(tierKey) {
+  const tier = TIERS[tierKey];
+  const count = selections[tierKey].length;
+  const countEl = document.getElementById(`count-${tierKey}`);
+  countEl.textContent = `${count} of ${tier.required}`;
+
+  if (count >= tier.required) {
+    countEl.classList.add('complete');
+  } else {
+    countEl.classList.remove('complete');
+  }
+
+  // Disable unselected rows when limit reached
+  for (const g of tier.golfers) {
+    const row = document.getElementById(`row-${tierKey}-${g.rank}`);
+    if (count >= tier.required && !selections[tierKey].includes(g.rank)) {
+      row.classList.add('disabled');
+    } else {
+      row.classList.remove('disabled');
+    }
+  }
+}
+
+function updateSubmitButton() {
+  const valid =
+    selections.tier1.length === TIERS.tier1.required &&
+    selections.tier2.length === TIERS.tier2.required &&
+    selections.tier3.length === TIERS.tier3.required &&
+    document.getElementById('name-input').value.trim().length > 0;
+
+  document.getElementById('submit-btn').disabled = !valid;
+}
+
+// Re-validate when name changes
+document.getElementById('name-input').addEventListener('input', updateSubmitButton);
+
+/* ==============================================================
+   SUBMIT
+   ============================================================== */
+async function submitPicks() {
+  const btn = document.getElementById('submit-btn');
+  const errorEl = document.getElementById('picks-error');
+  const name = document.getElementById('name-input').value.trim();
+
+  if (!name) {
+    errorEl.textContent = 'Please enter your name.';
+    errorEl.classList.add('show');
+    return;
+  }
+
+  errorEl.classList.remove('show');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Submitting...';
+
+  const getNames = (tierKey) =>
+    selections[tierKey].map(rank =>
+      TIERS[tierKey].golfers.find(g => g.rank === rank).name
+    );
+
+  const payload = {
+    name,
+    email: userEmail,
+    tier1: getNames('tier1'),
+    tier2: getNames('tier2'),
+    tier3: getNames('tier3'),
+  };
+
+  try {
+    const resp = await fetch(CONFIG.appsScriptUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      mode: 'no-cors',
+    });
+
+    // With no-cors we can't read the response, but if it didn't throw, assume success
+    // For Apps Script redirects, we need to handle this differently
+    showConfirmation(payload);
+  } catch (err) {
+    // If Apps Script URL not set, still show confirmation for testing
+    if (CONFIG.appsScriptUrl === 'YOUR_APPS_SCRIPT_WEB_APP_URL') {
+      showConfirmation(payload);
+    } else {
+      errorEl.textContent = 'Error submitting picks. Please try again.';
+      errorEl.classList.add('show');
+      btn.disabled = false;
+      btn.textContent = 'Submit Picks';
+    }
+  }
+}
+
+/* ==============================================================
+   CONFIRMATION
+   ============================================================== */
+function showConfirmation(payload) {
+  let html = '';
+  payload.tier1.forEach(p => {
+    html += `<div class="pick-item"><span class="pick-tier">Tier 1</span><span class="pick-name">${esc(p)}</span></div>`;
+  });
+  payload.tier2.forEach(p => {
+    html += `<div class="pick-item"><span class="pick-tier">Tier 2</span><span class="pick-name">${esc(p)}</span></div>`;
+  });
+  payload.tier3.forEach(p => {
+    html += `<div class="pick-item"><span class="pick-tier">Tier 3</span><span class="pick-name">${esc(p)}</span></div>`;
+  });
+
+  document.getElementById('confirm-picks').innerHTML = html;
+  switchScreen('screen-confirm');
+}
+
+/* ==============================================================
+   UTILS
+   ============================================================== */
+function switchScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function esc(s) {
+  if (s == null) return '';
+  const d = document.createElement('div');
+  d.textContent = String(s);
+  return d.innerHTML;
+}
+</script>
+
+</body>
+</html>

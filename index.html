@@ -378,6 +378,7 @@ footer a:hover { text-decoration: underline; }
   <div class="tabs">
     <button class="tab-btn active" data-tab="standings">Pool Standings</button>
     <button class="tab-btn" data-tab="leaderboard">Leaderboard</button>
+    <a href="picks.html" class="tab-btn" id="picks-tab-btn" style="text-decoration:none;">Submit Picks</a>
   </div>
 </div>
 
@@ -672,6 +673,21 @@ document.getElementById('tournament-title').textContent =
 
 loadAll();
 setInterval(loadAll, CONFIG.refreshInterval);
+
+/* ==============================================================
+   PICKS DEADLINE CHECK
+   ============================================================== */
+(function() {
+  const deadline = new Date('2026-04-10T07:00:00-04:00');
+  const btn = document.getElementById('picks-tab-btn');
+  if (new Date() > deadline) {
+    btn.textContent = 'Picks Closed';
+    btn.style.opacity = '0.4';
+    btn.style.pointerEvents = 'none';
+    btn.style.cursor = 'not-allowed';
+    btn.removeAttribute('href');
+  }
+})();
 
 /* ==============================================================
    STICKY HEADER SHADOW ON SCROLL
