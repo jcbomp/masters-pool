@@ -411,7 +411,7 @@ footer a:hover { text-decoration: underline; }
   <div class="tabs">
     <button class="tab-btn active" data-tab="standings">Pool Standings</button>
     <button class="tab-btn" data-tab="leaderboard">Leaderboard</button>
-    <a href="picks.html" class="tab-btn" id="picks-tab-btn" style="text-decoration:none;">Submit Picks</a>
+    <a href="picks.html" class="tab-btn" id="picks-tab-btn" style="text-decoration:none; display:none;">Submit Picks</a>
   </div>
 </div>
 
@@ -530,8 +530,13 @@ function renderStandings(rows) {
     const golfer = row[3];
     const pos = row[4];
     const scoreToPar = row[5] || '';
-    const rawThru = row[6] || '';
-    const thru = (rawThru === '18' || rawThru === 'FALSE') ? 'F' : rawThru;
+    const rawThruVal = row[6] || '';
+    // Determine thru: number = in progress, AM/PM = tee time, empty + has score = finished
+    let thru;
+    if (rawThruVal === '18' || rawThruVal === 'FALSE') thru = 'F';
+    else if (rawThruVal) thru = rawThruVal;
+    else if (scoreToPar && scoreToPar !== '-') thru = 'F';
+    else thru = '';
     const totalScore = row[7];
 
     // Carry entrant name forward for blank rows (rows 2-6 of each group)
@@ -588,10 +593,10 @@ function renderStandings(rows) {
             <span class="hdr-pos">POS</span>
           </div>
           ${e.golfers.map(g => {
-            // If score is empty but player has thru data (started playing), they're at even par
-            // Exclude tee times (contain AM/PM) — those players haven't started
-            const hasStarted = g.thru && g.thru !== '-' && g.thru !== '' && !g.thru.includes('AM') && !g.thru.includes('PM');
-            const displayScore = g.scoreToPar || (hasStarted ? 'E' : '-');
+            // If score is empty but player has finished or is playing, they're at even par
+            const isPlaying = g.thru && g.thru !== '-' && g.thru !== '' && !g.thru.includes('AM') && !g.thru.includes('PM');
+            const isFinished = g.thru === 'F';
+            const displayScore = g.scoreToPar || ((isPlaying || isFinished) ? 'E' : '-');
             return `
             <div class="pool-golfer">
               <span class="golfer-tier">${esc(g.tier)}</span>
@@ -644,8 +649,12 @@ function renderLeaderboard(rows) {
     const r4 = r[7] || '';
     const cut = r[8] || '';
     const rawThru = r[10] || '';
-    // 18 holes = finished, show "F". Also handle legacy FALSE from Google Sheets
-    const thru = (rawThru === '18' || rawThru === 'FALSE') ? 'F' : rawThru;
+    // Determine thru: number = in progress, AM/PM = tee time, empty + has score = finished
+    let thru;
+    if (rawThru === '18' || rawThru === 'FALSE') thru = 'F';
+    else if (rawThru) thru = rawThru;
+    else if (rawScore && rawScore !== '-') thru = 'F';
+    else thru = '';
 
     if (!name) continue;
 
