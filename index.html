@@ -256,7 +256,8 @@ tr:hover { background: var(--row-hover); }
 
 .golfer-name { flex: 1; }
 .golfer-tier { color: var(--gold-dim); font-size: 11px; margin-right: 12px; min-width: 44px; }
-.golfer-score { min-width: 40px; text-align: right; font-size: 12px; margin-right: 16px; }
+.golfer-score { min-width: 36px; text-align: right; font-size: 12px; margin-right: 12px; }
+.golfer-thru { min-width: 52px; text-align: right; font-size: 11px; color: rgba(255,255,255,0.5); margin-right: 12px; }
 .golfer-pos { min-width: 36px; text-align: right; font-weight: 700; }
 
 /* ============================================================
@@ -498,7 +499,8 @@ function renderStandings(rows) {
     const golfer = row[3];
     const pos = row[4];
     const scoreToPar = row[5] || '';
-    const totalScore = row[6];
+    const thru = row[6] || '';
+    const totalScore = row[7];
 
     // Carry entrant name forward for blank rows (rows 2-6 of each group)
     const resolvedName = name || (current ? current.name : '');
@@ -512,7 +514,7 @@ function renderStandings(rows) {
     }
 
     if (golfer) {
-      current.golfers.push({ golfer, tier, pos: parseInt(pos) || pos, scoreToPar });
+      current.golfers.push({ golfer, tier, pos: parseInt(pos) || pos, scoreToPar, thru });
     }
   }
   if (current) entrants.push(current);
@@ -552,6 +554,7 @@ function renderStandings(rows) {
               <span class="golfer-tier">${esc(g.tier)}</span>
               <span class="golfer-name">${esc(g.golfer)}</span>
               <span class="golfer-score ${scoreColorFn(g.scoreToPar)}">${esc(g.scoreToPar)}</span>
+              <span class="golfer-thru">${esc(g.thru)}</span>
               <span class="golfer-pos">${g.pos}</span>
             </div>
           `).join('')}
