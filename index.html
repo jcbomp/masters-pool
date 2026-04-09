@@ -610,7 +610,7 @@ function renderStandings(rows) {
 function renderLeaderboard(rows) {
   if (rows.length < 2) return '<div class="loading">No leaderboard data</div>';
 
-  // Columns: Player Name, Position, Score (vs Par), Total Strokes, R1, R2, R3, R4, Cut Status, Effective Position
+  // Columns: Player Name, Position, Score (vs Par), Total Strokes, R1, R2, R3, R4, Cut Status, Effective Position, Thru
   let html = `
     <table class="leaderboard-table">
       <thead>
@@ -618,7 +618,7 @@ function renderLeaderboard(rows) {
           <th class="num">Pos</th>
           <th>Player</th>
           <th class="num">Score</th>
-          <th class="num">Strokes</th>
+          <th class="num">Thru</th>
           <th class="num col-r1">R1</th>
           <th class="num col-r2">R2</th>
           <th class="num col-r3">R3</th>
@@ -632,16 +632,19 @@ function renderLeaderboard(rows) {
     const r = rows[i];
     const name = r[0] || '';
     const pos = r[1] || '';
-    const score = r[2] || '';
+    const rawScore = r[2] || '';
     const strokes = r[3] || '';
     const r1 = r[4] || '';
     const r2 = r[5] || '';
     const r3 = r[6] || '';
     const r4 = r[7] || '';
     const cut = r[8] || '';
+    const thru = r[10] || '';
 
     if (!name) continue;
 
+    // Show "E" for even par (empty score with a position means even)
+    const score = rawScore || (pos ? 'E' : '-');
     const scoreClass = scoreColor(score);
     const isCut = cut.toUpperCase() === 'CUT';
 
@@ -650,7 +653,7 @@ function renderLeaderboard(rows) {
         <td class="num">${esc(pos)}</td>
         <td>${esc(name)}</td>
         <td class="num ${scoreClass}">${esc(score)}</td>
-        <td class="num">${esc(strokes)}</td>
+        <td class="num">${esc(thru)}</td>
         <td class="num col-r1">${esc(r1)}</td>
         <td class="num col-r2">${esc(r2)}</td>
         <td class="num col-r3">${esc(r3)}</td>
