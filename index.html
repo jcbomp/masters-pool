@@ -429,7 +429,7 @@ footer a:hover { text-decoration: underline; }
 
 <div class="meta">
   <div class="updated" id="last-updated"></div>
-  <div>Auto-refreshes every 5 minutes</div>
+  <div>Auto-refreshes every 10 minutes</div>
 </div>
 
 <details class="scoring-explainer">
@@ -456,7 +456,7 @@ const CONFIG = {
   sheetId: '1lX9UC4KD9OLlXTPE_Y6xVT587RpQlTTr_Ex3PUMaI9w',
   standingsTab: 'Pool Standings',
   leaderboardTab: 'Sorted Leaderboard',
-  refreshInterval: 5 * 60 * 1000, // 5 minutes
+  refreshInterval: 10 * 60 * 1000, // 10 minutes
 };
 
 /* ==============================================================
@@ -531,7 +531,7 @@ function renderStandings(rows) {
     const pos = row[4];
     const scoreToPar = row[5] || '';
     const rawThru = row[6] || '';
-    const thru = rawThru === 'FALSE' ? 'F' : rawThru;
+    const thru = (rawThru === '18' || rawThru === 'FALSE') ? 'F' : rawThru;
     const totalScore = row[7];
 
     // Carry entrant name forward for blank rows (rows 2-6 of each group)
@@ -644,8 +644,8 @@ function renderLeaderboard(rows) {
     const r4 = r[7] || '';
     const cut = r[8] || '';
     const rawThru = r[10] || '';
-    // Google Sheets converts "F" to FALSE — fix it back
-    const thru = rawThru === 'FALSE' ? 'F' : rawThru;
+    // 18 holes = finished, show "F". Also handle legacy FALSE from Google Sheets
+    const thru = (rawThru === '18' || rawThru === 'FALSE') ? 'F' : rawThru;
 
     if (!name) continue;
 
