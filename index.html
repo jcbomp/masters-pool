@@ -588,7 +588,8 @@ function renderStandings(rows) {
           </div>
           ${e.golfers.map(g => {
             // If score is empty but player has thru data (started playing), they're at even par
-            const hasStarted = g.thru && g.thru !== '-' && g.thru !== '';
+            // Exclude tee times (contain AM/PM) — those players haven't started
+            const hasStarted = g.thru && g.thru !== '-' && g.thru !== '' && !g.thru.includes('AM') && !g.thru.includes('PM');
             const displayScore = g.scoreToPar || (hasStarted ? 'E' : '-');
             return `
             <div class="pool-golfer">
