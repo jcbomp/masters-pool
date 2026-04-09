@@ -530,7 +530,8 @@ function renderStandings(rows) {
     const golfer = row[3];
     const pos = row[4];
     const scoreToPar = row[5] || '';
-    const thru = row[6] || '';
+    const rawThru = row[6] || '';
+    const thru = rawThru === 'FALSE' ? 'F' : rawThru;
     const totalScore = row[7];
 
     // Carry entrant name forward for blank rows (rows 2-6 of each group)
@@ -642,7 +643,9 @@ function renderLeaderboard(rows) {
     const r3 = r[6] || '';
     const r4 = r[7] || '';
     const cut = r[8] || '';
-    const thru = r[10] || '';
+    const rawThru = r[10] || '';
+    // Google Sheets converts "F" to FALSE — fix it back
+    const thru = rawThru === 'FALSE' ? 'F' : rawThru;
 
     if (!name) continue;
 
