@@ -232,16 +232,47 @@ tr:hover { background: var(--row-hover); }
   text-transform: uppercase;
 }
 
+.pool-total-label {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  opacity: 0.7;
+  margin-right: 6px;
+}
+
 .pool-score {
   font-size: 16px;
   font-weight: 700;
   color: var(--gold);
-  margin-left: 12px;
 }
 
 .pool-golfers {
-  padding: 6px 14px 10px;
+  padding: 0 14px 10px;
 }
+
+.pool-golfer-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 6px 0 2px;
+}
+
+.pool-golfer-header span {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  opacity: 0.5;
+}
+
+.pool-golfer-header .hdr-score { min-width: 36px; text-align: right; margin-right: 12px; }
+.pool-golfer-header .hdr-thru { min-width: 52px; text-align: right; margin-right: 12px; }
+.pool-golfer-header .hdr-pos { min-width: 36px; text-align: right; }
 
 .pool-golfer {
   display: flex;
@@ -536,7 +567,7 @@ function renderStandings(rows) {
   let html = `<div class="pool-col-header">
     <span class="lbl-pos">POS</span>
     <span class="lbl-name">ENTRANT</span>
-    <span class="lbl-total">TOTAL</span>
+    <span class="lbl-total">TOTAL POS</span>
   </div>`;
   const scoreColorFn = scoreColor;
   for (const e of entrants) {
@@ -546,18 +577,26 @@ function renderStandings(rows) {
         <div class="pool-header">
           <div class="pool-place">${e.displayPlace}</div>
           <div class="pool-name">${esc(e.name)}</div>
+          <span class="pool-total-label">TOTAL POS</span>
           <div class="pool-score">${e.totalScoreRaw}</div>
         </div>
         <div class="pool-golfers">
-          ${e.golfers.map(g => `
+          <div class="pool-golfer-header">
+            <span class="hdr-score">SCORE</span>
+            <span class="hdr-thru">THRU</span>
+            <span class="hdr-pos">POS</span>
+          </div>
+          ${e.golfers.map(g => {
+            const displayScore = g.scoreToPar || '-';
+            return `
             <div class="pool-golfer">
               <span class="golfer-tier">${esc(g.tier)}</span>
               <span class="golfer-name">${esc(g.golfer)}</span>
-              <span class="golfer-score ${scoreColorFn(g.scoreToPar)}">${esc(g.scoreToPar)}</span>
+              <span class="golfer-score ${scoreColorFn(displayScore)}">${esc(displayScore)}</span>
               <span class="golfer-thru">${esc(g.thru)}</span>
               <span class="golfer-pos">${g.pos}</span>
-            </div>
-          `).join('')}
+            </div>`;
+          }).join('')}
         </div>
       </div>`;
   }
