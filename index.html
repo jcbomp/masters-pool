@@ -593,10 +593,11 @@ function renderStandings(rows) {
             <span class="hdr-pos">POS</span>
           </div>
           ${e.golfers.map(g => {
-            // If score is empty but player has finished or is playing, they're at even par
-            const isPlaying = g.thru && g.thru !== '-' && g.thru !== '' && !g.thru.includes('AM') && !g.thru.includes('PM');
-            const isFinished = g.thru === 'F';
-            const displayScore = g.scoreToPar || ((isPlaying || isFinished) ? 'E' : '-');
+            // If score is blank but player is active in the tournament (tee time, in-progress holes,
+            // or finished), show "E". The gviz CSV endpoint drops the string "E" from score columns
+            // it infers as numeric, so any active non-cut player with a blank score is actually even par.
+            const hasActiveThru = g.thru && g.thru !== '-' && g.thru !== '';
+            const displayScore = g.scoreToPar || (hasActiveThru ? 'E' : '-');
             return `
             <div class="pool-golfer">
               <span class="golfer-tier">${esc(g.tier)}</span>
