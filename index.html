@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026 Masters Pool</title>
+<title>2026 PGA Championship Pool</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -452,7 +452,7 @@ footer a:hover { text-decoration: underline; }
   <div class="tabs">
     <button class="tab-btn active" data-tab="standings">Pool Standings</button>
     <button class="tab-btn" data-tab="leaderboard">Leaderboard</button>
-    <a href="picks.html" class="tab-btn" id="picks-tab-btn" style="text-decoration:none; display:none;">Submit Picks</a>
+    <a href="picks.html" class="tab-btn" id="picks-tab-btn" style="text-decoration:none;">Submit Picks</a>
   </div>
 </div>
 
@@ -491,7 +491,7 @@ footer a:hover { text-decoration: underline; }
    CONFIGURATION — Edit these for different tournaments
    ============================================================== */
 const CONFIG = {
-  tournamentName: '2026 Masters Pool',
+  tournamentName: '2026 PGA Championship Pool',
   tournamentEmoji: '\u26f3',
   year: 2026,
   sheetId: '1lX9UC4KD9OLlXTPE_Y6xVT587RpQlTTr_Ex3PUMaI9w',
@@ -786,7 +786,7 @@ setInterval(loadAll, CONFIG.refreshInterval);
    PICKS DEADLINE CHECK
    ============================================================== */
 (function() {
-  const deadline = new Date('2026-04-10T07:30:00-04:00');
+  const deadline = new Date('2026-05-14T07:00:00-04:00');
   const btn = document.getElementById('picks-tab-btn');
   if (new Date() > deadline) {
     btn.textContent = 'Picks Closed';
