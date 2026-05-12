@@ -316,61 +316,115 @@ input:focus {
   text-align: center;
 }
 
-.pick-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border-soft);
-  font-size: 14px;
-}
+/* ============================================================
+   CONFIRMATION SCREEN
+   Final state after successful pick submission. No back-to-form,
+   no scoreboard CTA (standings isn't live yet pre-deadline). Goal:
+   warm send-off, not a transactional receipt.
+   ============================================================ */
 
-.pick-item:last-child { border-bottom: none; }
-
-.pick-tier {
-  color: var(--accent-dim);
-  font-size: 12px;
-  min-width: 50px;
-}
-
-.pick-name { flex: 1; }
-
-/* Confirmation */
 .confirmation {
-  background: var(--card);
-  border-radius: 8px;
-  padding: 32px 24px;
-  margin-top: 24px;
+  max-width: 480px;
+  margin: 24px auto 0;
+  padding: 40px 24px 48px;
   text-align: center;
 }
 
-.confirmation .check-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
+.confirm-mark {
+  font-size: 56px;
+  line-height: 1;
+  margin-bottom: 18px;
+  animation: confirm-mark-in 320ms cubic-bezier(0.34, 1.4, 0.5, 1) both;
 }
 
-.confirmation h2 {
+.confirm-title {
   font-family: 'Roboto Condensed', sans-serif;
-  font-size: 22px;
-  color: var(--accent);
-  margin-bottom: 8px;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+  color: var(--text);
+  margin: 0 0 14px;
 }
 
-.confirmation p {
-  font-size: 13px;
-  color: rgba(255,255,255,0.6);
-  margin-bottom: 16px;
+.confirm-rule {
+  width: 56px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+  margin: 0 auto 32px;
 }
 
-.confirmation .picks-summary {
+.picks-summary {
   text-align: left;
-  margin: 20px 0;
+  margin-bottom: 32px;
 }
 
-.scoreboard-link {
-  color: var(--accent);
-  text-decoration: none;
+.confirm-tier {
+  background: var(--card);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 16px 20px 18px;
+  margin-bottom: 12px;
 }
-.scoreboard-link:hover { text-decoration: underline; }
+
+.confirm-tier:last-child { margin-bottom: 0; }
+
+.confirm-tier-label {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--accent-dim);
+  margin-bottom: 10px;
+}
+
+.confirm-pick-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.confirm-pick {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--text);
+  padding: 4px 0;
+}
+
+.confirm-note {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-mute-strong);
+  margin: 0 0 28px;
+  padding: 0 8px;
+}
+
+.confirm-note strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.confirm-signoff {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--text);
+  margin: 0;
+  padding-top: 22px;
+  border-top: 1px solid var(--border-soft);
+}
+
+@keyframes confirm-mark-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.85); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confirm-mark { animation: none; }
+}
 
 /* Error */
 .error-msg {
@@ -497,11 +551,19 @@ footer a:hover { text-decoration: underline; }
   <!-- Screen 4: Confirmation -->
   <div id="screen-confirm" class="screen">
     <div class="confirmation">
-      <div class="check-icon">&#9971;</div>
-      <h2>Your Picks Are Locked In!</h2>
-      <p>Good luck at Aronimink!</p>
+      <div class="confirm-mark" aria-hidden="true">&#9971;</div>
+      <h2 class="confirm-title">Congrats, your picks are submitted!</h2>
+      <div class="confirm-rule" aria-hidden="true"></div>
+
       <div class="picks-summary" id="confirm-picks"></div>
-      <a href="index.html" class="btn btn-secondary" style="display:block;text-align:center;margin-top:20px;text-decoration:none;">View Live Scoreboard</a>
+
+      <p class="confirm-note">
+        The <strong>Pool Standings</strong> page goes live
+        <strong>Thursday at 7:00 AM ET</strong> &mdash; check back then to see
+        all the picks.
+      </p>
+
+      <p class="confirm-signoff">Enjoy Aronimink, and thanks for playing!</p>
     </div>
   </div>
 </main>
@@ -909,16 +971,19 @@ async function submitPicks() {
    CONFIRMATION
    ============================================================== */
 function showConfirmation(payload) {
-  let html = '';
-  payload.tier1.forEach(p => {
-    html += `<div class="pick-item"><span class="pick-tier">Tier 1</span><span class="pick-name">${esc(p)}</span></div>`;
-  });
-  payload.tier2.forEach(p => {
-    html += `<div class="pick-item"><span class="pick-tier">Tier 2</span><span class="pick-name">${esc(p)}</span></div>`;
-  });
-  payload.tier3.forEach(p => {
-    html += `<div class="pick-item"><span class="pick-tier">Tier 3</span><span class="pick-name">${esc(p)}</span></div>`;
-  });
+  const tierGroups = [
+    { label: 'Tier 1', picks: payload.tier1 },
+    { label: 'Tier 2', picks: payload.tier2 },
+    { label: 'Tier 3', picks: payload.tier3 },
+  ];
+
+  const html = tierGroups.map(t => `
+    <div class="confirm-tier">
+      <div class="confirm-tier-label">${esc(t.label)}</div>
+      <ul class="confirm-pick-list">
+        ${t.picks.map(p => `<li class="confirm-pick">${esc(p)}</li>`).join('')}
+      </ul>
+    </div>`).join('');
 
   document.getElementById('confirm-picks').innerHTML = html;
   switchScreen('screen-confirm');
