@@ -784,11 +784,20 @@ setInterval(loadAll, CONFIG.refreshInterval);
 
 /* ==============================================================
    PICKS DEADLINE CHECK
+   Three-state lifecycle for the Submit Picks tab:
+     - before deadline   -> visible, normal
+     - deadline..hideAt  -> "Picks Closed", grayed, not clickable
+     - after hideAt      -> display:none (hidden for rest of tournament)
+   Page-load only; refresh required to cross a boundary while open.
    ============================================================== */
 (function() {
   const deadline = new Date('2026-05-14T07:00:00-04:00');
+  const hideAt = new Date('2026-05-14T09:00:00-04:00');
   const btn = document.getElementById('picks-tab-btn');
-  if (new Date() > deadline) {
+  const now = new Date();
+  if (now > hideAt) {
+    btn.style.display = 'none';
+  } else if (now > deadline) {
     btn.textContent = 'Picks Closed';
     btn.style.opacity = '0.4';
     btn.style.pointerEvents = 'none';
