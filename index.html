@@ -157,6 +157,11 @@ header .subtitle {
 
 .tab-btn:hover { opacity: 0.9; }
 
+/* Pre-deadline disabled-tab label has a long form for desktop and a short
+   form for narrow viewports. The IIFE toggles labels via inline <span>s;
+   these rules swap which one is shown. */
+.tab-label-short { display: none; }
+
 /* ============================================================
    CONTENT AREA
    ============================================================ */
@@ -426,6 +431,8 @@ footer a:hover { text-decoration: underline; }
   header h1 { font-size: 22px; }
   header .subtitle { font-size: 11px; letter-spacing: 2px; }
   .tab-btn { font-size: 12px; padding: 8px 14px; letter-spacing: 1px; }
+  .tab-label-full { display: none; }
+  .tab-label-short { display: inline; }
   main { padding: 10px; }
   th { font-size: 10px; padding: 6px 6px; }
   td { padding: 6px 6px; font-size: 12px; }
@@ -783,27 +790,63 @@ loadAll();
 setInterval(loadAll, CONFIG.refreshInterval);
 
 /* ==============================================================
-   PICKS DEADLINE CHECK
+   TOURNAMENT DATES
+   Shared deadline references for the picks-tab and standings-tab IIFEs.
+   ============================================================== */
+const PICKS_DEADLINE = new Date('2026-05-14T07:00:00-04:00');
+const PICKS_HIDE_AT  = new Date('2026-05-14T09:00:00-04:00');
+
+/* ==============================================================
+   PICKS TAB LIFECYCLE
    Three-state lifecycle for the Submit Picks tab:
-     - before deadline   -> visible, normal
-     - deadline..hideAt  -> "Picks Closed", grayed, not clickable
-     - after hideAt      -> display:none (hidden for rest of tournament)
+     - before PICKS_DEADLINE        -> visible, normal
+     - PICKS_DEADLINE..PICKS_HIDE_AT -> "Picks Closed", grayed, not clickable
+     - after PICKS_HIDE_AT          -> display:none for rest of tournament
    Page-load only; refresh required to cross a boundary while open.
    ============================================================== */
 (function() {
-  const deadline = new Date('2026-05-14T07:00:00-04:00');
-  const hideAt = new Date('2026-05-14T09:00:00-04:00');
   const btn = document.getElementById('picks-tab-btn');
   const now = new Date();
-  if (now > hideAt) {
+  if (now > PICKS_HIDE_AT) {
     btn.style.display = 'none';
-  } else if (now > deadline) {
+  } else if (now > PICKS_DEADLINE) {
     btn.textContent = 'Picks Closed';
     btn.style.opacity = '0.4';
     btn.style.pointerEvents = 'none';
     btn.style.cursor = 'not-allowed';
     btn.removeAttribute('href');
   }
+})();
+
+/* ==============================================================
+   POOL STANDINGS PRE-DEADLINE LOCK
+   Before the picks deadline there are no entries to score, so:
+     - default landing tab swaps from Pool Standings to Leaderboard
+     - the Pool Standings tab is grayed/unclickable with explanatory
+       label (long form for desktop, short form for narrow viewports
+       via the tab-label-full/tab-label-short CSS swap)
+   Visual styling mirrors the existing "Picks Closed" disabled state.
+   Page-load only; refresh required to cross the boundary while open.
+   ============================================================== */
+(function() {
+  if (new Date() > PICKS_DEADLINE) return;
+
+  const standingsBtn     = document.querySelector('.tab-btn[data-tab="standings"]');
+  const standingsSection = document.getElementById('standings');
+  const leaderboardBtn   = document.querySelector('.tab-btn[data-tab="leaderboard"]');
+  const leaderboardSection = document.getElementById('leaderboard');
+
+  standingsBtn.classList.remove('active');
+  standingsSection.classList.remove('active');
+  leaderboardBtn.classList.add('active');
+  leaderboardSection.classList.add('active');
+
+  standingsBtn.style.opacity = '0.4';
+  standingsBtn.style.pointerEvents = 'none';
+  standingsBtn.style.cursor = 'not-allowed';
+  standingsBtn.innerHTML =
+    '<span class="tab-label-full">Pool Standings (Available Thursday 7 AM ET)</span>' +
+    '<span class="tab-label-short">Standings — Thu 7 AM</span>';
 })();
 
 /* ==============================================================
