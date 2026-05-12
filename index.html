@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-tournament="pga-championship">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,17 +11,58 @@
    CONFIGURATION — Change these for different tournaments
    ============================================================ */
 
-:root {
-  --green-dark: #003d2e;
-  --green-mid: #006747;
-  --green-light: #00875a;
-  --gold: #f2c75c;
-  --gold-dim: #c9a84c;
-  --white: #f0f0ec;
-  --red: #d04040;
-  --grey-card: #1a2e28;
-  --row-hover: rgba(255,255,255,0.04);
+/* Tournament-scoped theme variables. Switch the active theme via the
+   data-tournament attribute on the <html> element. Masters values preserve
+   the original Augusta palette so we can swap back next year; PGA values
+   are the navy/gold palette introduced for the 2026 PGA Championship. */
+:root[data-tournament="masters"] {
+  --primary: #003d2e;
+  --accent: #f2c75c;
+  --accent-dim: #c9a84c;
+  --bg: #003d2e;
+  --text: #f0f0ec;
+  --text-on-surface: #f0f0ec;
+  --text-on-accent: #003d2e;
+  --text-mute-strong: var(--text-mute-strong);
+  --text-mute: var(--text-mute);
+  --text-mute-weak: var(--text-mute-weak);
+  --surface: #006747;
+  --surface-active: #00875a;
+  --card: #1a2e28;
+  --danger: #d04040;
+  --row-hover: var(--border-faint);
   --row-alt: rgba(0,0,0,0.12);
+  --border-soft: var(--border-soft);
+  --border-faint: var(--border-faint);
+  --border-medium: var(--border-medium);
+  --shadow-card: var(--shadow-card);
+  --input-bg: var(--input-bg);
+  --input-border: var(--input-border);
+}
+
+:root[data-tournament="pga-championship"] {
+  --primary: #1a2c5b;
+  --accent: #c8a951;
+  --accent-dim: #a08739;
+  --bg: #ffffff;
+  --text: #1a2c5b;
+  --text-on-surface: #ffffff;
+  --text-on-accent: #1a2c5b;
+  --text-mute-strong: rgba(26,44,91,0.6);
+  --text-mute: rgba(26,44,91,0.5);
+  --text-mute-weak: rgba(26,44,91,0.35);
+  --surface: #1a2c5b;
+  --surface-active: #2a3d6e;
+  --card: #f4f6fa;
+  --danger: #c43030;
+  --row-hover: rgba(26,44,91,0.04);
+  --row-alt: rgba(26,44,91,0.03);
+  --border-soft: rgba(26,44,91,0.10);
+  --border-faint: rgba(26,44,91,0.06);
+  --border-medium: rgba(26,44,91,0.12);
+  --shadow-card: rgba(26,44,91,0.10);
+  --input-bg: rgba(26,44,91,0.04);
+  --input-border: rgba(26,44,91,0.20);
 }
 
 /* ============================================================
@@ -31,8 +72,8 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background: var(--green-dark);
-  color: var(--white);
+  background: var(--bg);
+  color: var(--text);
   font-family: 'Roboto Mono', 'Courier New', monospace;
   font-size: 14px;
   line-height: 1.5;
@@ -51,12 +92,12 @@ body {
 }
 
 .sticky-header.scrolled {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 16px var(--shadow-card);
 }
 
 header {
-  background: var(--green-mid);
-  border-bottom: 3px solid var(--gold);
+  background: var(--surface);
+  border-bottom: 3px solid var(--accent);
   text-align: center;
   padding: 24px 16px 18px;
 }
@@ -66,7 +107,7 @@ header h1 {
   font-size: 32px;
   font-weight: 700;
   letter-spacing: 2px;
-  color: var(--gold);
+  color: var(--accent);
   text-transform: uppercase;
   margin-bottom: 2px;
 }
@@ -75,7 +116,7 @@ header .subtitle {
   font-family: 'Roboto Condensed', sans-serif;
   font-size: 13px;
   letter-spacing: 4px;
-  color: var(--white);
+  color: var(--text-on-surface);
   text-transform: uppercase;
   opacity: 0.8;
 }
@@ -88,7 +129,7 @@ header .subtitle {
   display: flex;
   justify-content: center;
   gap: 4px;
-  background: var(--green-dark);
+  background: var(--bg);
   padding: 12px 16px 0;
 }
 
@@ -98,8 +139,8 @@ header .subtitle {
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--white);
-  background: var(--green-mid);
+  color: var(--text-on-surface);
+  background: var(--surface);
   border: none;
   padding: 10px 24px;
   cursor: pointer;
@@ -110,8 +151,8 @@ header .subtitle {
 
 .tab-btn.active {
   opacity: 1;
-  background: var(--green-light);
-  border-bottom: 2px solid var(--gold);
+  background: var(--surface-active);
+  border-bottom: 2px solid var(--accent);
 }
 
 .tab-btn:hover { opacity: 0.9; }
@@ -145,10 +186,10 @@ th {
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--gold-dim);
+  color: var(--accent-dim);
   text-align: left;
   padding: 8px 10px;
-  border-bottom: 2px solid var(--gold-dim);
+  border-bottom: 2px solid var(--accent-dim);
   white-space: nowrap;
 }
 
@@ -156,7 +197,7 @@ th.num, td.num { text-align: center; }
 
 td {
   padding: 7px 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid var(--border-medium);
   white-space: nowrap;
 }
 
@@ -181,7 +222,7 @@ tr:hover { background: var(--row-hover); }
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--gold-dim);
+  color: var(--accent-dim);
   opacity: 0.6;
 }
 
@@ -190,16 +231,16 @@ tr:hover { background: var(--row-hover); }
 .pool-col-header .lbl-total { margin-left: 12px; }
 
 .pool-card {
-  background: var(--grey-card);
+  background: var(--card);
   border-radius: 6px;
   margin-bottom: 10px;
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid var(--border-soft);
 }
 
 .pool-card.leader {
-  border: 1px solid var(--gold);
-  box-shadow: 0 0 12px rgba(242,199,92,0.15);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
 .pool-header {
@@ -208,19 +249,19 @@ tr:hover { background: var(--row-hover); }
   justify-content: space-between;
   padding: 12px 14px;
   background: rgba(0,0,0,0.2);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .pool-place {
   font-family: 'Roboto Condensed', sans-serif;
   font-size: 22px;
   font-weight: 700;
-  color: var(--gold);
+  color: var(--accent);
   min-width: 36px;
   text-align: center;
 }
 
-.leader .pool-place { color: var(--gold); text-shadow: 0 0 8px rgba(242,199,92,0.4); }
+.leader .pool-place { color: var(--accent); text-shadow: 0 0 8px color-mix(in srgb, var(--accent) 40%, transparent); }
 
 .pool-name {
   font-family: 'Roboto Condensed', sans-serif;
@@ -238,7 +279,7 @@ tr:hover { background: var(--row-hover); }
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--gold-dim);
+  color: var(--accent-dim);
   opacity: 0.7;
   margin-right: 6px;
 }
@@ -246,7 +287,7 @@ tr:hover { background: var(--row-hover); }
 .pool-score {
   font-size: 16px;
   font-weight: 700;
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .pool-golfers {
@@ -266,7 +307,7 @@ tr:hover { background: var(--row-hover); }
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--gold-dim);
+  color: var(--accent-dim);
   opacity: 0.5;
 }
 
@@ -280,24 +321,24 @@ tr:hover { background: var(--row-hover); }
   align-items: center;
   padding: 4px 0;
   font-size: 13px;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid var(--border-faint);
 }
 
 .pool-golfer:last-child { border-bottom: none; }
 
 .golfer-name { flex: 1; }
-.golfer-tier { color: var(--gold-dim); font-size: 11px; margin-right: 12px; min-width: 44px; }
+.golfer-tier { color: var(--accent-dim); font-size: 11px; margin-right: 12px; min-width: 44px; }
 .golfer-score { min-width: 36px; text-align: right; font-size: 12px; margin-right: 12px; }
-.golfer-thru { min-width: 52px; text-align: right; font-size: 11px; color: rgba(255,255,255,0.5); margin-right: 12px; }
+.golfer-thru { min-width: 52px; text-align: right; font-size: 11px; color: var(--text-mute-strong); margin-right: 12px; }
 .golfer-pos { min-width: 36px; text-align: right; font-weight: 700; }
 
 /* ============================================================
    LEADERBOARD SCORES
    ============================================================ */
 
-.score-under { color: var(--gold); font-weight: 700; }
-.score-over { color: var(--red); font-weight: 700; }
-.score-even { color: var(--white); }
+.score-under { color: var(--accent); font-weight: 700; }
+.score-over { color: var(--danger); font-weight: 700; }
+.score-even { color: var(--text); }
 .score-cut { color: #888; font-style: italic; }
 
 /* ============================================================
@@ -308,7 +349,7 @@ tr:hover { background: var(--row-hover); }
   text-align: center;
   padding: 16px;
   font-size: 12px;
-  color: rgba(255,255,255,0.4);
+  color: var(--text-mute);
 }
 
 .meta .updated { margin-bottom: 4px; }
@@ -317,11 +358,11 @@ footer {
   text-align: center;
   padding: 16px;
   font-size: 11px;
-  color: rgba(255,255,255,0.25);
+  color: var(--text-mute-weak);
   letter-spacing: 1px;
 }
 
-footer a { color: var(--gold-dim); text-decoration: none; }
+footer a { color: var(--accent-dim); text-decoration: none; }
 footer a:hover { text-decoration: underline; }
 
 /* ============================================================
@@ -339,7 +380,7 @@ footer a:hover { text-decoration: underline; }
   font-size: 14px;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: #FFD700;
+  color: var(--accent);
   cursor: pointer;
   text-align: center;
   padding: 8px;
@@ -359,7 +400,7 @@ footer a:hover { text-decoration: underline; }
 
 .explainer-content p {
   font-size: 12px;
-  color: rgba(255,255,255,0.5);
+  color: var(--text-mute-strong);
   margin-bottom: 6px;
   line-height: 1.6;
 }
@@ -373,7 +414,7 @@ footer a:hover { text-decoration: underline; }
 .loading {
   text-align: center;
   padding: 48px;
-  color: rgba(255,255,255,0.4);
+  color: var(--text-mute);
   font-size: 14px;
 }
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-tournament="pga-championship">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,22 +7,65 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --green-dark: #003d2e;
-  --green-mid: #006747;
-  --green-light: #00875a;
-  --gold: #f2c75c;
-  --gold-dim: #c9a84c;
-  --white: #f0f0ec;
-  --red: #d04040;
-  --grey-card: #1a2e28;
+/* Tournament-scoped theme variables. Switch the active theme via the
+   data-tournament attribute on the <html> element. Masters values preserve
+   the original Augusta palette so we can swap back next year; PGA values
+   are the navy/gold palette introduced for the 2026 PGA Championship. */
+:root[data-tournament="masters"] {
+  --primary: #003d2e;
+  --accent: #f2c75c;
+  --accent-dim: #c9a84c;
+  --bg: #003d2e;
+  --text: #f0f0ec;
+  --text-on-surface: #f0f0ec;
+  --text-on-accent: #003d2e;
+  --text-mute-strong: var(--text-mute-strong);
+  --text-mute: var(--text-mute);
+  --text-mute-weak: var(--text-mute-weak);
+  --surface: #006747;
+  --surface-active: #00875a;
+  --card: #1a2e28;
+  --danger: #d04040;
+  --row-hover: var(--border-faint);
+  --row-alt: rgba(0,0,0,0.12);
+  --border-soft: var(--border-soft);
+  --border-faint: var(--border-faint);
+  --border-medium: var(--border-medium);
+  --shadow-card: var(--shadow-card);
+  --input-bg: var(--input-bg);
+  --input-border: var(--input-border);
+}
+
+:root[data-tournament="pga-championship"] {
+  --primary: #1a2c5b;
+  --accent: #c8a951;
+  --accent-dim: #a08739;
+  --bg: #ffffff;
+  --text: #1a2c5b;
+  --text-on-surface: #ffffff;
+  --text-on-accent: #1a2c5b;
+  --text-mute-strong: rgba(26,44,91,0.6);
+  --text-mute: rgba(26,44,91,0.5);
+  --text-mute-weak: rgba(26,44,91,0.35);
+  --surface: #1a2c5b;
+  --surface-active: #2a3d6e;
+  --card: #f4f6fa;
+  --danger: #c43030;
+  --row-hover: rgba(26,44,91,0.04);
+  --row-alt: rgba(26,44,91,0.03);
+  --border-soft: rgba(26,44,91,0.10);
+  --border-faint: rgba(26,44,91,0.06);
+  --border-medium: rgba(26,44,91,0.12);
+  --shadow-card: rgba(26,44,91,0.10);
+  --input-bg: rgba(26,44,91,0.04);
+  --input-border: rgba(26,44,91,0.20);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background: var(--green-dark);
-  color: var(--white);
+  background: var(--bg);
+  color: var(--text);
   font-family: 'Roboto Mono', 'Courier New', monospace;
   font-size: 14px;
   line-height: 1.5;
@@ -30,8 +73,8 @@ body {
 }
 
 header {
-  background: var(--green-mid);
-  border-bottom: 3px solid var(--gold);
+  background: var(--surface);
+  border-bottom: 3px solid var(--accent);
   text-align: center;
   padding: 24px 16px 18px;
 }
@@ -41,7 +84,7 @@ header h1 {
   font-size: 32px;
   font-weight: 700;
   letter-spacing: 2px;
-  color: var(--gold);
+  color: var(--accent);
   text-transform: uppercase;
 }
 
@@ -49,19 +92,19 @@ header .subtitle {
   font-family: 'Roboto Condensed', sans-serif;
   font-size: 13px;
   letter-spacing: 4px;
-  color: var(--white);
+  color: var(--text-on-surface);
   text-transform: uppercase;
   opacity: 0.8;
 }
 
 .deadline-banner {
-  background: rgba(0,0,0,0.3);
+  background: var(--input-bg);
   text-align: center;
   padding: 10px 16px;
   font-family: 'Roboto Condensed', sans-serif;
   font-size: 14px;
   letter-spacing: 1px;
-  color: var(--gold);
+  color: var(--accent);
 }
 
 main {
@@ -76,7 +119,7 @@ main {
 
 /* Email screen */
 .email-form {
-  background: var(--grey-card);
+  background: var(--card);
   border-radius: 8px;
   padding: 32px 24px;
   margin-top: 24px;
@@ -86,7 +129,7 @@ main {
 .email-form h2 {
   font-family: 'Roboto Condensed', sans-serif;
   font-size: 20px;
-  color: var(--gold);
+  color: var(--accent);
   margin-bottom: 8px;
 }
 
@@ -106,7 +149,7 @@ main {
   font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--gold-dim);
+  color: var(--accent-dim);
   margin-bottom: 6px;
   text-align: left;
 }
@@ -115,17 +158,17 @@ input[type="text"],
 input[type="email"] {
   width: 100%;
   padding: 12px 14px;
-  background: rgba(0,0,0,0.3);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
   border-radius: 4px;
-  color: var(--white);
+  color: var(--text);
   font-family: 'Roboto Mono', monospace;
   font-size: 16px;
   outline: none;
 }
 
 input:focus {
-  border-color: var(--gold);
+  border-color: var(--accent);
 }
 
 .btn {
@@ -135,8 +178,8 @@ input:focus {
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--green-dark);
-  background: var(--gold);
+  color: var(--text-on-accent);
+  background: var(--accent);
   border: none;
   padding: 14px 32px;
   border-radius: 4px;
@@ -153,18 +196,18 @@ input:focus {
 
 .btn-secondary {
   background: transparent;
-  border: 1px solid var(--gold);
-  color: var(--gold);
+  border: 1px solid var(--accent);
+  color: var(--accent);
   margin-top: 12px;
 }
 
 /* Tier sections */
 .tier-section {
-  background: var(--grey-card);
+  background: var(--card);
   border-radius: 8px;
   margin-bottom: 16px;
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid var(--border-soft);
 }
 
 .tier-header {
@@ -173,7 +216,7 @@ input:focus {
   align-items: center;
   padding: 14px 16px;
   background: rgba(0,0,0,0.2);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .tier-title {
@@ -182,7 +225,7 @@ input:focus {
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .tier-count {
@@ -192,7 +235,7 @@ input:focus {
 }
 
 .tier-count.complete {
-  color: var(--green-light);
+  color: var(--surface-active);
   font-weight: 700;
 }
 
@@ -206,18 +249,18 @@ input:focus {
   padding: 10px 16px;
   cursor: pointer;
   transition: background 0.15s;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid var(--border-faint);
 }
 
 .golfer-row:last-child { border-bottom: none; }
-.golfer-row:hover { background: rgba(255,255,255,0.04); }
-.golfer-row.selected { background: rgba(242,199,92,0.1); }
+.golfer-row:hover { background: var(--border-faint); }
+.golfer-row.selected { background: color-mix(in srgb, var(--accent) 10%, transparent); }
 .golfer-row.disabled { opacity: 0.35; cursor: not-allowed; }
 
 .golfer-check {
   width: 20px;
   height: 20px;
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 2px solid var(--input-border);
   border-radius: 3px;
   margin-right: 12px;
   flex-shrink: 0;
@@ -228,13 +271,13 @@ input:focus {
 }
 
 .golfer-row.selected .golfer-check {
-  background: var(--gold);
-  border-color: var(--gold);
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 .golfer-row.selected .golfer-check::after {
   content: '\2713';
-  color: var(--green-dark);
+  color: var(--text-on-accent);
   font-size: 14px;
   font-weight: 700;
 }
@@ -252,14 +295,14 @@ input:focus {
 
 .golfer-odds {
   font-size: 12px;
-  color: var(--gold-dim);
+  color: var(--accent-dim);
   margin-left: 8px;
   white-space: nowrap;
 }
 
 /* Existing picks display */
 .existing-picks {
-  background: var(--grey-card);
+  background: var(--card);
   border-radius: 8px;
   padding: 24px;
   margin-top: 24px;
@@ -268,7 +311,7 @@ input:focus {
 .existing-picks h2 {
   font-family: 'Roboto Condensed', sans-serif;
   font-size: 20px;
-  color: var(--gold);
+  color: var(--accent);
   margin-bottom: 16px;
   text-align: center;
 }
@@ -277,14 +320,14 @@ input:focus {
   display: flex;
   justify-content: space-between;
   padding: 8px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid var(--border-soft);
   font-size: 14px;
 }
 
 .pick-item:last-child { border-bottom: none; }
 
 .pick-tier {
-  color: var(--gold-dim);
+  color: var(--accent-dim);
   font-size: 12px;
   min-width: 50px;
 }
@@ -293,7 +336,7 @@ input:focus {
 
 /* Confirmation */
 .confirmation {
-  background: var(--grey-card);
+  background: var(--card);
   border-radius: 8px;
   padding: 32px 24px;
   margin-top: 24px;
@@ -308,7 +351,7 @@ input:focus {
 .confirmation h2 {
   font-family: 'Roboto Condensed', sans-serif;
   font-size: 22px;
-  color: var(--gold);
+  color: var(--accent);
   margin-bottom: 8px;
 }
 
@@ -324,7 +367,7 @@ input:focus {
 }
 
 .scoreboard-link {
-  color: var(--gold);
+  color: var(--accent);
   text-decoration: none;
 }
 .scoreboard-link:hover { text-decoration: underline; }
@@ -332,12 +375,12 @@ input:focus {
 /* Error */
 .error-msg {
   background: rgba(208,64,64,0.15);
-  border: 1px solid var(--red);
+  border: 1px solid var(--danger);
   border-radius: 4px;
   padding: 10px 14px;
   margin-bottom: 16px;
   font-size: 13px;
-  color: var(--red);
+  color: var(--danger);
   display: none;
 }
 
@@ -348,8 +391,8 @@ input:focus {
   display: inline-block;
   width: 20px;
   height: 20px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: var(--gold);
+  border: 2px solid var(--input-border);
+  border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin-right: 8px;
@@ -362,11 +405,11 @@ footer {
   text-align: center;
   padding: 24px 16px;
   font-size: 11px;
-  color: rgba(255,255,255,0.25);
+  color: var(--text-mute-weak);
   letter-spacing: 1px;
 }
 
-footer a { color: var(--gold-dim); text-decoration: none; }
+footer a { color: var(--accent-dim); text-decoration: none; }
 footer a:hover { text-decoration: underline; }
 
 /* Submit section — sticky at bottom */
@@ -376,11 +419,11 @@ footer a:hover { text-decoration: underline; }
   left: 0;
   right: 0;
   z-index: 100;
-  background: var(--green-dark);
-  border-top: 2px solid var(--gold-dim);
+  background: var(--bg);
+  border-top: 2px solid var(--accent-dim);
   padding: 12px 16px;
   text-align: center;
-  box-shadow: 0 -4px 16px rgba(0,0,0,0.4);
+  box-shadow: 0 -4px 16px var(--shadow-card);
 }
 
 .submit-section .btn {
@@ -390,7 +433,7 @@ footer a:hover { text-decoration: underline; }
 }
 
 .name-input-section {
-  background: var(--grey-card);
+  background: var(--card);
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 16px;
