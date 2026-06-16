@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-tournament="pga-championship">
+<html lang="en" data-tournament="us-open">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -63,6 +63,35 @@
   --shadow-card: rgba(26,44,91,0.10);
   --input-bg: rgba(26,44,91,0.04);
   --input-border: rgba(26,44,91,0.20);
+}
+
+/* US Open values are the USGA navy/red palette introduced for the 2026
+   U.S. Open at Shinnecock Hills. --accent is USGA red (used for highlights
+   and under-par scores); --danger is a distinct dark crimson so over-par
+   scores and error states stay visually separable from the red accent. */
+:root[data-tournament="us-open"] {
+  --primary: #0a2d5c;
+  --accent: #c8102e;
+  --accent-dim: #9e1b2e;
+  --bg: #ffffff;
+  --text: #0a2d5c;
+  --text-on-surface: #ffffff;
+  --text-on-accent: #ffffff;
+  --text-mute-strong: rgba(10,45,92,0.6);
+  --text-mute: rgba(10,45,92,0.5);
+  --text-mute-weak: rgba(10,45,92,0.35);
+  --surface: #0a2d5c;
+  --surface-active: #143a6e;
+  --card: #f4f6fa;
+  --danger: #8a1538;
+  --row-hover: rgba(10,45,92,0.04);
+  --row-alt: rgba(10,45,92,0.03);
+  --border-soft: rgba(10,45,92,0.10);
+  --border-faint: rgba(10,45,92,0.06);
+  --border-medium: rgba(10,45,92,0.12);
+  --shadow-card: rgba(10,45,92,0.10);
+  --input-bg: rgba(10,45,92,0.04);
+  --input-border: rgba(10,45,92,0.20);
 }
 
 /* ============================================================
