@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-tournament="us-open">
+<html lang="en" data-tournament="pga-championship">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026 US Open Pool — Submit Picks</title>
+<title>2026 Open Championship Pool — Submit Picks</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -61,8 +61,8 @@
   --input-border: rgba(26,44,91,0.20);
 }
 
-/* US Open values are the USGA navy/red palette introduced for the 2026
-   U.S. Open at Shinnecock Hills. --accent is USGA red (used for highlights
+/* us-open values are the USGA navy/red palette from the June 2026 major,
+   retained for future reuse. --accent is USGA red (used for highlights
    and under-par scores); --danger is a distinct dark crimson so over-par
    scores and error states stay visually separable from the red accent. */
 :root[data-tournament="us-open"] {
@@ -535,7 +535,7 @@ footer a:hover { text-decoration: underline; }
 <body>
 
 <header>
-  <h1>&#9971; 2026 US Open Pool</h1>
+  <h1>&#9971; 2026 Open Championship Pool</h1>
   <div class="subtitle">Submit Your Picks</div>
 </header>
 
@@ -592,7 +592,7 @@ footer a:hover { text-decoration: underline; }
         all the picks.
       </p>
 
-      <p class="confirm-signoff">Enjoy Shinnecock Hills, and thanks for playing!</p>
+      <p class="confirm-signoff">Enjoy Royal Birkdale, and thanks for playing!</p>
     </div>
   </div>
 </main>
@@ -613,14 +613,14 @@ const CONFIG = {
 };
 
 /* ==============================================================
-   TIER DATA (hardcoded for speed — 156 golfers, 2026 U.S. Open)
+   TIER DATA (hardcoded for speed — 156 golfers, 2026 Open Championship)
    ============================================================== */
 // TIERS is hardcoded per-tournament. Source of truth is the Tier Rosters tab
 // in the master Google Sheet (populated via scripts/populate_tier_rosters.py).
 // Future refactor: fetch live from the sheet at page load to eliminate this
 // duplication. See conversation 2026-05-11 (Option 2 deferred due to sheet
 // permissions complexity and PGA Championship deadline timing). Plan to
-// refactor in the calm window after the PGA Championship before the US Open.
+// refactor in a calm window between majors.
 const TIERS = {
   tier1: {
     label: 'Tier 1',
